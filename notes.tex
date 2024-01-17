@@ -1,0 +1,243 @@
+\documentclass{math}
+
+\usepackage{bm}
+
+\renewcommand{\vec}[1]{\boldsymbol{#1}}
+
+\title{Spectral Graph Theory}
+\author{Vignesh M Pai}
+\date{}
+
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+\subsection{Eigenvalues and Optimization}
+
+Let $M$ be a $n$ dimensional symmetric matrix.
+
+\begin{definition}[Rayleigh Quotient]
+    The Rayleigh quotient for a matrix $M$ is defined as
+    \begin{align*}
+        R(\vec{x}, M) := \frac{\vec{x}^T M \vec{x}}{\vec{x}^T \vec{x}}
+    \end{align*}
+    the matrix is ommitted if obvious from context.
+\end{definition}
+
+\begin{theorem}
+    Let
+    \begin{align*}
+        \vec{x} \in \arg \max_{\vec{x} \in \mathbb{R}^n - \set{0}} R(\vec{x})
+    \end{align*}
+    Such an $\vec{x}$ exists and is an eigenvector of $M$ with the maximum eigenvalue $\mu_1$.
+    We can write a similar statement for the minimum eigenvalue by minimizing $R$.
+\end{theorem}
+
+\begin{theorem}[Spectral Theorem for Symmetric Matrices]
+    There exist numbers $\mu_1, ..., \mu_n$ and orthonormal vectors $\vec{\psi}_1, ..., \vec{\psi}_n$ such that $M \vec{\psi}_i = \mu_i \vec{\psi}_i$
+    iff for $1 \leq i \leq n$
+    \begin{align*}
+        \vec{\psi}_i \in \arg \max_{\substack{\norm{\vec{x}} = 1 \\ \vec{x}^T \vec{\psi}_j = 0,\ j < i}} R(\vec{x})
+    \end{align*}
+    or equivalently
+    \begin{align*}
+        \vec{\psi}_i \in \arg \min_{\substack{\norm{\vec{x}} = 1 \\ \vec{x}^T \vec{\psi}_j = 0,\ j > i}} R(\vec{x})
+    \end{align*}
+\end{theorem}
+
+\begin{theorem}[Courant-Fischer Theorem]
+    Let $M$ have eigenvalues $\mu_1 \geq \mu_2 \geq ... \geq \mu_n$, then
+    \begin{align*}
+        \mu_k = \max_{\substack{S \subset \mathbb{R}^n \\ \dim(S) = k}} \min_{\substack{\vec{x} \in S \\ \vec{x} \neq 0}} R(\vec{x}) = \min_{\substack{T \subset \mathbb{R}^n \\ \dim(T) = n - k + 1}} \max_{\substack{\vec{x} \in T \\ \vec{x} \neq 0}} R(\vec{x})
+    \end{align*}
+    where $S, T$ are subspaces of $\mathbb{R}^n$.
+\end{theorem}
+
+\begin{theorem}[Cauchy's Interlacing Theorem]
+    Let $A$ be a symmetric real matrix of dimension $n$.
+    Let $B$ be obtained by deleting the same row and column of $A$ ($N$ is a principal submatrix of dimension $n - 1$).
+    Let $\alpha_1 \geq ... \geq \alpha_n$ be the eigenvalues of $A$ and $\beta_1 \geq ... \geq \beta_{n-1}$ be the eigenvalues of $B$.
+    Then for $1 \leq k \leq n - 1$
+    \begin{align*}
+        \alpha_k \geq \beta_k \geq \alpha_{k + 1}
+    \end{align*}
+\end{theorem}
+
+\subsection{The Laplacian and Graph Drawing}
+
+Vectors on graphs are functions $V \to \mathbb{R}$, the vector $\vec{1}$ denotes the function $\vec{1}(a) = 1$.
+The degree function $\vec{d}$ is also a vector.
+
+Matrices on graphs are functions $V \times V \to \mathbb{R}$ or can be viewed as linear operators on the space of vectors on graphs.
+Let $G$ be a graph, then we use $M_G$ to denote the adjacency matrix,
+$D_G$ to denote the diagonal matrix of vertex degrees,
+and $L_G = D_G - M_G$ to denote the Laplacian matrix.
+Observe that $M_G \vec{1} = \vec{d}$ and $L_G \vec{1} = \vec{0}$.
+
+The Laplacian is also a natural quadratic form on a graph
+\begin{align*}
+    \vec{x}^T L_G \vec{x} = \sum_{(a, b) \in E(G)} w_{a, b} (\vec{x}(a) - \vec{x}(b))^2
+\end{align*}
+Let $\lambda_1 = 0 \leq \lambda_2 \leq ... \leq \lambda_n$ be the eigenvalues of $L_G$ with eigenvectors $\vec{\psi}_1, ..., \vec{\psi}_n$.
+
+\begin{lemma}
+    $G$ is connected iff $\lambda_2 \neq 0$.
+\end{lemma}
+
+We draw a graph in $k$ dimensions by using the eigenvectors corresponding to $\lambda_2, ..., \lambda_{k+1}$ as the coordinates of vertices.
+These coordinates minimize the expression (excluding coordinates that lead to trivial drawings):
+\begin{align*}
+    \sum_{(a, b) \in G} w_{a, b} \norm{x(a) - x(b)}^2 = \sum_{i=1}^{k} \vec{x_i}^T L_G \vec{x_i}
+\end{align*}
+where $x: V \to \mathbb{R}^k, x = (\vec{x_1}, ..., \vec{x_k})$ is the coordinate function.
+
+\begin{theorem}[Hall's Drawing Theorem]
+    Let $\vec{x_1}, ..., \vec{x_k}$ be orthonormal vectors that are orthogonal to $\vec{1}$, then
+    \begin{align*}
+        \sum_{i=1}^{k} \vec{x_i}^T L_G \vec{x_i} \geq \sum_{i=2}^{k + 1} \lambda_1
+    \end{align*}
+    where equality holds for $\vec{\psi}_j^T \vec{x_i} = 0$ for all $i$ and $j > k + 1$.
+\end{theorem}
+
+\subsection{Adjacency Matrices}
+
+Let the eigenvalues of $M_G$ be $\mu_1 \geq ... \geq \mu_n$.
+
+\begin{lemma}
+    Let $d_{avg}$ and $d_{max}$ be the average and maximum degrees respectively, then
+    \begin{align*}
+        d_{avg} \leq \mu_1 \leq d_{max}
+    \end{align*}
+    further, if $H$ be a subgraph of $G$, then
+    \begin{align*}
+        d_{avg}(H) \leq \mu_1
+    \end{align*}
+\end{lemma}
+
+\begin{lemma}
+    If $G$ is connected and $\mu_1 = d_{max}$ then $G$ is $d_{max}$-regular.
+\end{lemma}
+
+\begin{theorem}[Wilf's Theorem]
+    Let $\chi(G)$ be the chromatic number of $G$, then
+    \begin{align*}
+        \chi(G) \leq \lfloor\mu_1\rfloor + 1
+    \end{align*}
+\end{theorem}
+
+\begin{lemma}
+    Let $G$ be a connected weighted graph and $\vec{\phi}$ be a non negative eigenvector of $M_G$, then $\vec{\phi}$ is strictly positive.
+\end{lemma}
+
+\begin{theorem}[Perron-Frobenius Theorem]
+    Let $G$ be connected, then
+    \begin{enumerate}
+        \item $\mu_1$ has a strictly positive eigenvector
+        \item $\mu_1 \geq - \mu_n$
+        \item $\mu_1 > \mu_2$
+    \end{enumerate}
+\end{theorem}
+
+\begin{lemma}
+    If $G$ is bipartite, then the eigenvalues of $M_G$ are symmetric about $0$.
+\end{lemma}
+
+\begin{theorem}
+    Let $G$ be connected, $\mu_1 = - \mu_n$ iff $G$ is bipartite.
+\end{theorem}
+
+\subsection{Comparing Graphs}
+
+We introduce the partial order $\succeq$ on matrices as
+\begin{align*}
+    A \succeq B \iff \forall \vec{x}, \vec{x}^T A \vec{x} \geq \vec{x}^T B \vec{x}
+\end{align*}
+In particular $A \succeq 0$ means $A$ is positive semidefinite.
+For graphs $G, H$ on the same set of vertices, we write $G \succeq H$ iff $L_G \succeq L_H$.
+If $H$ is a subset of $G$, we have
+\begin{align*}
+    G \succeq H
+\end{align*}
+
+For a graph $H$, define $c \cdot H$ to be the graph $H$ with each edge weight multiplied by $c$.
+Let $\lambda_k(H)$ denote the $k$th smallest eigenvalue of $L_H$.
+\begin{lemma}
+    If $G, H$ are graphs
+    \begin{align*}
+        G \succeq c \cdot H \implies \lambda_k(G) \geq c \lambda_k(H)
+    \end{align*}
+\end{lemma}
+
+Let $G_{a, b}$ be the graph with only the edge $(a, b)$.
+The proof of the following lemmas follow trivially from the Cauchy Schwarz inequality applied to the Laplacian.
+
+\begin{lemma}
+    Let $P_n$ be the path graph on $n$ vertices between vertex $1$ and $n$.
+    \begin{align*}
+        G_{1, n} \preceq (n - 1)P_n 
+    \end{align*}
+\end{lemma}
+
+\begin{lemma}[Extension to Weighted Paths]
+    Let $P_{n, w}$ be the weighted path graph on $n$ vertices with $w_i$ the weight on the edge $(i, i+1)$.
+    \begin{align*}
+        G_{1, n} \preceq \left(\sum_{i=1}^{n-1} \frac{1}{w_i}\right) P_{n, w}
+    \end{align*}
+\end{lemma}
+
+We use these lemmas to prove bounds on the eigenvalues of graphs.
+
+Let $K_n$ be the complete graph on $n$ vertices, it is easy to see that $\lambda_i(K_n) = n$ for $i \geq 2$.
+We can also write that
+\begin{align*}
+    L_{K_n} = \sum_{a < b} L_{G_{a, b}}
+\end{align*}
+this allows us to prove the following
+\begin{gather*}
+    K_n = \sum_{a < b} G_{a, b} \preceq \sum_{a < b} (b - a) P_{a, b} \preceq \sum_{a < b} (b - a) P_n \\
+    \implies \lambda_2(K_n) = n \leq \lambda_2(P_n) \sum_{a < b} (b - a) = \frac{n (n + 1) (n - 1)}{6} \lambda_2(P_n)
+\end{gather*}
+
+\begin{lemma}[Bounding $\lambda_2$ of the Path Graph]
+    \begin{align*}
+        \lambda_2(P_n) \geq \frac{6}{(n+1)(n-1)}
+    \end{align*}
+\end{lemma}
+
+Let $T_d$ be the complete binary tree of depth $d$, this will have $n = 2^{d+1} - 1$ vertices.
+Let $T_d^{a, b}$ be the shortest path between vertices $a, b$ on $T_d$.
+Note that this path has size atmost $2d \leq 2 \log_{2} n$. Doing a similar comparision with $K_n$ we get
+\begin{gather*}
+    K_n = \sum_{a < b} G_{a, b} \preceq \sum_{a < b} 2d T_d^{a, b} \preceq \sum_{a < b} 2 \log_2 n T_d = \binom{n}{2} 2 \log_2 n T_d \\
+    \implies \lambda_2(K_n) = n \leq \binom{n}{2} 2 \log_2 n \lambda_2(T_d)
+\end{gather*}
+
+\begin{lemma}[Bounding $\lambda_2$ of Complete Binary Trees]
+    \begin{align*}
+        \lambda_2(T_d) \geq \frac{1}{(n - 1) \log_2 n}        
+    \end{align*}
+\end{lemma}
+
+\section{Random Graphs}
+
+An Erd\"{o}s-R\'{e}nyi random graph is a graph in which each edge is present with probability $p$ independent of other edges.
+We can write the adjacency matrix $M$ of this graph as
+\begin{align*}
+    M = p(J - I) + R
+\end{align*}
+where $J$ is the all ones matrix, $I$ is the identity matrix and $R$ is defined for off diagonal entries as
+\begin{align*}
+    R(a, b) = \begin{cases}
+        1 - p & \text{with probability $p$} \\
+        -p & \text{with probability $1-p$}
+    \end{cases}
+\end{align*}
+clearly the expectation of $M$ is $\rho(J - I)$, which means the expectation of $R$ is the zero matrix.
+This can be easily verified from the definition of $R$.
+
+\end{document}
