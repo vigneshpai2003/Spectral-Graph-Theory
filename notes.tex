@@ -1,6 +1,7 @@
 \documentclass{math}
 
 \usepackage{bm}
+\usepackage{hyperref}
 
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 
@@ -238,6 +239,94 @@ where $J$ is the all ones matrix, $I$ is the identity matrix and $R$ is defined 
     \end{cases}
 \end{align*}
 clearly the expectation of $M$ is $\rho(J - I)$, which means the expectation of $R$ is the zero matrix.
-This can be easily verified from the definition of $R$.
+This can be easily verified from the definition of $R$. We will show that the eigenvalues of $R$ are usually small.
+
+\subsection{Appendix}
+
+\begin{theorem}[Markov's Inequality]
+    Let $X$ be a non negative random variable with $a > 0$, then
+    \begin{align*}
+        P(X > a E(X)) \leq a^{-1}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        E(X) &= P(X \leq a E(X)) E(X | X \leq a E(X)) + P(X > a E(X)) E(X | X > a E(X)) \\
+        &\implies P(X > a E(X)) \leq \frac{E(X)}{E(X | X > aE(X))} \leq \frac{E(X)}{aE(X)} = a^{-1}
+    \end{align*}
+\end{proof}
+
+\begin{theorem}[Sylvester's Theorem]
+    Let $A$ be an $m \times n$ matrix and $B$ be an $n \times m$ matrix, then we can write
+    \begin{align*}
+        x^n\det(xI_m - AB) = x^m\det(xI_n - BA)
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Define the following matrices
+    \begin{align*}
+        C = \begin{bmatrix}
+            xI_m & A \\
+            B & I_n
+        \end{bmatrix},\quad
+        D = \begin{bmatrix}
+            I_m & 0 \\
+            -B & xI_n
+        \end{bmatrix}
+    \end{align*}
+    we can see that
+    \begin{align*}
+        CD = \begin{bmatrix}
+            xI_m - AB & xA \\
+            0 & xI_n
+        \end{bmatrix},\quad
+        DC = \begin{bmatrix}
+            xI_m & A \\
+            0 & xI_n - BA
+        \end{bmatrix}
+    \end{align*}
+    using $\det(CD) = \det(DC)$, we get the required result.
+\end{proof}
+
+\begin{lemma}
+    Let $A$ be an $m \times n$ matrix and $B$ be an $n \times m$ matrix, then $AB$ and $BA$ have the same set of non zero eigenvalues.
+\end{lemma}
+\begin{proof}
+    This follows trivially from Sylvester's theorem or from the following proof.
+    Let $\vec{x}$ be an eigenvector of $AB$ with eigenvalue $\lambda \neq 0$, it is simple to check that $\vec{y} = B\vec{x}$ is an eigenvector of $BA$ with eigenvalue $\lambda$.
+\end{proof}
+
+\begin{lemma}
+    For positive definite symmetric matrices $A$, $\sqrt{A}$ exists and is unique.
+\end{lemma}
+
+\begin{theorem}[Cauchy Interlacing Theorem for Rank One Updates]
+    Let $A$ be a symmetric matrix with eigenvalues $\alpha_1 \geq ... \geq \alpha_n$.
+    Let $B = A + \vec{x} \vec{x}^T$ for some vector $\vec{x}$, let $B$ have eigenvalues $\beta_1 \geq ... \geq \beta_n$, then
+    \begin{align*}
+        \beta_i \geq \alpha_i \geq \beta_{i + 1}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    Proving the first inequality is trivial using Courant Fischer theorem, the proof of the second inequality using this method is not known (to me).
+    Therefore, we will make use of a different method.
+    We will prove the result for positive definite symmetric matrices $A$ by adding $(1 - \alpha_n) I$ to $A$.
+
+    Clearly $\sqrt{A}$ is a well defined, now define the $n \times (n + 1)$ matrix $C$ as
+    \begin{align*}
+        C := \begin{bmatrix}
+            \sqrt{A} & \vec{x}
+        \end{bmatrix}
+    \end{align*}
+    then we can write
+    \begin{align*}
+        CC^T = B, \quad C^T C = \begin{bmatrix}
+            A & \sqrt{A}x \\
+            x^T \sqrt{A} & x^T x
+        \end{bmatrix}
+    \end{align*}
+    By previous lemma, $C^TC$ and $CC^T$ share the same set of nonnegative eigenvalues. The eigenvalues of $A$ interlace the eigenvalues of $C^T C$ since it is a principal submatrix.
+    The eigenvalues of $C^TC$ are thus all positive except the smallest (which is $0$). Since the eigenvalues of $CC^T = B$ are positive, the result follows.
+\end{proof}
 
 \end{document}
