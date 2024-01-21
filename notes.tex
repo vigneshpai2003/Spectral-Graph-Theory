@@ -256,12 +256,32 @@ This can be easily verified from the definition of $R$. We will show that the ei
     \end{align*}
 \end{proof}
 
-\begin{theorem}[Sylvester's Theorem]
+\subsection{Cauchy's Interlacing Theorem for Rank One Updates}
+
+The result that we want to prove is
+
+\begin{theorem}[Cauchy Interlacing Theorem for Rank One Updates]
+    Let $A$ be a symmetric matrix with eigenvalues $\alpha_1 \geq ... \geq \alpha_n$.
+    Let $B = A + \vec{x} \vec{x}^T$ for some vector $\vec{x}$, let $B$ have eigenvalues $\beta_1 \geq ... \geq \beta_n$, then
+    \begin{align*}
+        \beta_i \geq \alpha_i \geq \beta_{i + 1}
+    \end{align*}
+\end{theorem}
+
+We will do this in two ways. In the first proof, we show that $A$ is a principal submatrix of a matrix with 'similar' eigenvalues to $B$,
+this will allow us to apply Cauchy's interlacing theorem for principal submatrices.
+In the second proof, we will relate the characteristic polynomials and their roots.
+
+\subsubsection{The First Proof}
+
+We first prove a couple of lemmas that are known as 'Sylvester's theorem'.
+
+\begin{lemma}\label{lemma:sylvester}
     Let $A$ be an $m \times n$ matrix and $B$ be an $n \times m$ matrix, then we can write
     \begin{align*}
         x^n\det(xI_m - AB) = x^m\det(xI_n - BA)
     \end{align*}
-\end{theorem}
+\end{lemma}
 \begin{proof}
     Define the following matrices
     \begin{align*}
@@ -292,27 +312,23 @@ This can be easily verified from the definition of $R$. We will show that the ei
     Let $A$ be an $m \times n$ matrix and $B$ be an $n \times m$ matrix, then $AB$ and $BA$ have the same set of non zero eigenvalues.
 \end{lemma}
 \begin{proof}
-    This follows trivially from Sylvester's theorem or from the following proof.
+    This follows trivially from the previous lemma or from the following proof.
     Let $\vec{x}$ be an eigenvector of $AB$ with eigenvalue $\lambda \neq 0$, it is simple to check that $\vec{y} = B\vec{x}$ is an eigenvector of $BA$ with eigenvalue $\lambda$.
 \end{proof}
 
 \begin{lemma}
-    For positive definite symmetric matrices $A$, $\sqrt{A}$ exists and is unique.
+    For positive definite symmetric matrices $A$, a matrix $\sqrt{A}$ such that $\sqrt{A}^2 = A$ exists.
 \end{lemma}
-
-\begin{theorem}[Cauchy Interlacing Theorem for Rank One Updates]
-    Let $A$ be a symmetric matrix with eigenvalues $\alpha_1 \geq ... \geq \alpha_n$.
-    Let $B = A + \vec{x} \vec{x}^T$ for some vector $\vec{x}$, let $B$ have eigenvalues $\beta_1 \geq ... \geq \beta_n$, then
-    \begin{align*}
-        \beta_i \geq \alpha_i \geq \beta_{i + 1}
-    \end{align*}
-\end{theorem}
 \begin{proof}
-    Proving the first inequality is trivial using Courant Fischer theorem, the proof of the second inequality using this method is not known (to me).
-    Therefore, we will make use of a different method.
+    Existence follows since the diagonalized matrix of $A$ has a square root. 
+\end{proof}
+
+We are now ready to prove the theorem.
+
+\begin{proof}
     We will prove the result for positive definite symmetric matrices $A$ by adding $(1 - \alpha_n) I$ to $A$.
 
-    Clearly $\sqrt{A}$ is a well defined, now define the $n \times (n + 1)$ matrix $C$ as
+    Let $\sqrt{A}$ be a square root of $A$, now define the $n \times (n + 1)$ matrix $C$ as
     \begin{align*}
         C := \begin{bmatrix}
             \sqrt{A} & \vec{x}
@@ -327,6 +343,85 @@ This can be easily verified from the definition of $R$. We will show that the ei
     \end{align*}
     By previous lemma, $C^TC$ and $CC^T$ share the same set of nonnegative eigenvalues. The eigenvalues of $A$ interlace the eigenvalues of $C^T C$ since it is a principal submatrix.
     The eigenvalues of $C^TC$ are thus all positive except the smallest (which is $0$). Since the eigenvalues of $CC^T = B$ are positive, the result follows.
+\end{proof}
+
+\subsubsection{The Second Proof}
+
+\begin{definition}[Cyclic Vectors]
+    Let $A$ be a linear operator on a vector space $V$.
+    $\vec{x} \in V$ is called cyclic if the set of finite linear combinations of $\setc{A^n\vec{x}}{n \in \mathbb{N}_0}$ equals $V$.
+\end{definition}
+
+The above definition is equivalent to saying that $\vec{x} \in V$ is cyclic if
+\begin{align*}
+    V = \setc{p(A)\vec{x}}{p \in \mathbb{R}[t]}
+\end{align*}
+
+\begin{lemma}
+    A symmetric linear operator $A$ on a vector space $V$ has a cyclic vector iff $A$ has no repeated eigenvalues.
+\end{lemma}
+\begin{proof}
+    Suppose that $\vec{x}$ is a cyclic vector, then
+    \begin{align*}
+        V = \setc{p(A)\vec{x}}{p \in \mathbb{R}[t]}
+    \end{align*}
+    Fix an orthonormal basis on $V$, since $A$ is symmetric, it is diagonalizable: $A = UDU^T$ where $D$ is diagonal and $U$ is orthogonal.
+    We can then rewrite the above condition as
+    \begin{align*}
+        V = \setc{p(D)\vec{y}}{p \in \mathbb{R}[t]}, \quad (\vec{y} = U^T\vec{x})
+    \end{align*}
+    Note that $\setc{p(D)}{p \in R[t]}$ is a vector space with dimension equal to the number of distinct eigenvalues of $A$.
+    Therefore, $\setc{p(D)\vec{y}}{p \in \mathbb{R}[t]}$ has the same dimension and we cannot have repeated eigenvalues.
+
+    Conversely, suppose $A$ has no repeated eigenvalues, then $\vec{x} = U \vec{y}$ corresponding to $\vec{y} = \vec{1}$ is a cyclic vector
+    (it is simple to show that each eigenvector can be written in the form $p(D)\vec{y}$ for some $p$, and thus $V = \setc{p(D)\vec{y}}{p \in \mathbb{R}[t]}$).
+\end{proof}
+
+\begin{definition}
+    Let $A$ be a matrix, then $\chi(A)$ represents the characteristic polynomial of $A$ given by
+    \begin{align*}
+        \chi(A)(z) = \det(zI - A)
+    \end{align*}
+\end{definition}
+
+\begin{lemma}
+    Let $A$ be a symmetric linear operator on a vector space $V$, let $W$ be a subspace of $V$.
+    Then the eigenvalues of $A$ are the same as the union of the eigenvalues of $A$ restricted to $W$ and $W^\perp$.
+\end{lemma}
+
+We are now ready to prove the theorem.
+
+\begin{proof}
+    Define $W := \setc{p(A)\vec{x}}{p \in \mathbb{R}[t]}$ and let $W^\perp$ denote the orthogonal vector space.
+    Since $\vec{x} \in W$, $\vec{x}^T \vec{v} = 0$ for all $\vec{v} \in W^\perp$, this means that $A = B$ on $W^\perp$.
+    Now, let us retrict $A, B$ to $W$, let $k = \dim W$.
+    Since $W$ is cyclic by definition, $A$ has $k$ distinct eigenvalues $\lambda_1 > ... > \lambda_k$ with eigenvectors $\vec{\phi}_i$.
+    Let $z$ not be an eigenvalue of $A$, then
+    \begin{align*}
+        \chi(B)(z) &= \det(zI - A - \vec{x}\vec{x}^T) \\
+        &= \det(zI - A) \det(I - (zI - A)^{-1}\vec{x}\vec{x}^T)
+    \end{align*}
+    $zI-A$ is invertible since $z$ is not an eigenvalue of $A$. We can now use \hyperref[lemma:sylvester]{Sylvester's theorem} with $x = 1$ to write
+    \begin{align*}
+        \chi(B)(z) &= \chi(A)(z)(1 - \vec{x}^T (zI - A)^{-1} \vec{x}) \\
+        &= \chi(A)(z)\left(1 - \sum_{i = 1}^k \frac{(\vec{x}^T \vec{\phi}_i^T)^2}{z - \lambda_i}\right)
+    \end{align*}
+    Define the function
+    \begin{align*}
+        G(z) = \sum_{i=1}^k \frac{(\vec{x}^T \vec{\phi}_i)^2}{z - \lambda_i}
+    \end{align*}
+    Note the following properties of $G$
+    \begin{enumerate}
+        \item Solutions to $G(z) = 1$ are eigenvalues of $B$.
+        \item Since $\phi_i \in W$, we must have $\vec{x}^T \vec{\phi}_i \neq 0$. 
+        \item There is exactly one solution ($\mu_{i + 1}$) to $G(z) = 1$ for $z \in (\lambda_{i + 1}, \lambda_{i})$, $1 \leq i \leq k - 1$.
+        \item There is exactly one solution ($\mu_1$) to $G(z) = 1$ for $z > \lambda_1$.
+    \end{enumerate}
+    It is now obvious that $\mu_i$ are exactly the eigenvalues of $B$ and they interlace the eigenvalues of $A$.
+    \begin{align*}
+        \mu_i \geq \lambda_i \geq \mu_{i + 1}
+    \end{align*}
+    Since $A=B$ on $W^\perp$, the interlacing property is not affected by including the eigenvalues from this vector space.
 \end{proof}
 
 \end{document}

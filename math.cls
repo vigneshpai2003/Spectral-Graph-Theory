@@ -22,7 +22,7 @@
 
 \usepackage[most]{tcolorbox}
 
-\newtcbtheorem[auto counter,number within=section]{theorem_box}%
+\newtcbtheorem[auto counter,number within=subsection]{theorem_box}%
   {Theorem}{
     fonttitle=\bfseries,
     coltitle=black,
@@ -41,7 +41,7 @@
     colbacktitle=violet!30!white,
     colframe=violet!30!white}{corollary}
 
-\newtcbtheorem[auto counter,number within=section]{definition_box}%
+\newtcbtheorem[auto counter,number within=subsection]{definition_box}%
   {Definition}{
     fonttitle=\bfseries,
     coltitle=black,
