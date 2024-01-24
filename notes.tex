@@ -180,7 +180,7 @@ The proof of the following lemmas follow trivially from the Cauchy Schwarz inequ
 \begin{lemma}
     Let $P_n$ be the path graph on $n$ vertices between vertex $1$ and $n$.
     \begin{align*}
-        G_{1, n} \preceq (n - 1)P_n 
+        G_{1, n} \preceq (n - 1)P_n
     \end{align*}
 \end{lemma}
 
@@ -220,7 +220,7 @@ Note that this path has size atmost $2d \leq 2 \log_{2} n$. Doing a similar comp
 
 \begin{lemma}[Bounding $\lambda_2$ of Complete Binary Trees]
     \begin{align*}
-        \lambda_2(T_d) \geq \frac{1}{(n - 1) \log_2 n}        
+        \lambda_2(T_d) \geq \frac{1}{(n - 1) \log_2 n}
     \end{align*}
 \end{lemma}
 
@@ -234,14 +234,48 @@ We can write the adjacency matrix $M$ of this graph as
 where $J$ is the all ones matrix, $I$ is the identity matrix and $R$ is defined for off diagonal entries as
 \begin{align*}
     R(a, b) = \begin{cases}
-        1 - p & \text{with probability $p$} \\
-        -p & \text{with probability $1-p$}
-    \end{cases}
+                  1 - p & \text{with probability $p$}   \\
+                  -p    & \text{with probability $1-p$}
+              \end{cases}
 \end{align*}
 clearly the expectation of $M$ is $\rho(J - I)$, which means the expectation of $R$ is the zero matrix.
-This can be easily verified from the definition of $R$. We will show that the eigenvalues of $R$ are usually small.
+This can be easily verified from the definition of $R$. We will show that the eigenvalues of $R$ are usually small
+and thus $M$ is approximately $p(J - I)$. The following lemma gives bounds on the eigenvalues of $M$.
+
+\begin{lemma}
+    Let the eigenvalues of $R$ be $\rho_1 \geq ... \geq \rho_n$.
+    Then, the eigenvalues of $R - pI$ are $\rho_i - p$.
+    Since $pJ$ is rank one, the eigenvalues of $M = R - pI + pJ$ interlace the eigenvalues of $R - pI$.
+\end{lemma}
+
+We can get some quantitative results on the eigenvalues of $R$ by calculating the moments of $\rho_i$.
+It is easy to verify that the $k$th moment is
+\begin{align*}
+    \sum_{i=1}^{n} \rho_i^k = Tr(R^k)
+\end{align*}
 
 \subsection{Appendix}
+
+\begin{theorem}
+    Let $A, B$ be commuting symmetric matrices on a vector space $V$, then they can be simultaneously diagonalized by the same unitary transformation.
+\end{theorem}
+\begin{proof}
+    We will prove by induction on the dimension of $V$ that $A, B$ have the same eigenspaces,
+    orthonormal basis of these eigenspaces will then provide the unitary transformation.
+
+    Clearly the statement is true for $\dim V = 1$, let $\dim V = n > 1$ and assume the statement is true for all $V$ such that $\dim V < n$.
+    Let $\alpha_1, ..., \alpha_k$ be the distinct eigenvalues of $A$. If $k = 1$, then $A = \lambda_1 I$ and thus we are done.
+    So assume $k \geq 2$, let $\Lambda_i$ be the eigenspace corresponding to the eigenvalue $\alpha_i$.
+    Then, $\Lambda_i$ is an invariant subspace of $B$ since for any $\vec{v} \in \Lambda_i$
+    \begin{align*}
+        A(B\vec{v}) = BA\vec{v} = \lambda_i B \vec{v} \implies B\vec{v} \in \Lambda_i
+    \end{align*}
+    Thus, we can restrict $A, B$ to $\lambda_i$ and apply the induction hypothesis (since $k \geq 2 \implies \dim \Lambda_i < n$)
+    to get an eigenbasis of $\Lambda_i$ that simultaneously diagonalizes $A, B$ over $\Lambda_i$. The union of these eigenbases over all $\Lambda_i$ gives us a basis for $V$
+    that simultaneously diagonalizes both $A, B$.
+\end{proof}
+
+The above theorem is helpful in calculating the eigenvalues of $A + B$.
 
 \begin{theorem}[Markov's Inequality]
     Let $X$ be a non negative random variable with $a > 0$, then
@@ -251,8 +285,8 @@ This can be easily verified from the definition of $R$. We will show that the ei
 \end{theorem}
 \begin{proof}
     \begin{align*}
-        E(X) &= P(X \leq a E(X)) E(X | X \leq a E(X)) + P(X > a E(X)) E(X | X > a E(X)) \\
-        &\implies P(X > a E(X)) \leq \frac{E(X)}{E(X | X > aE(X))} \leq \frac{E(X)}{aE(X)} = a^{-1}
+        E(X) & = P(X \leq a E(X)) E(X | X \leq a E(X)) + P(X > a E(X)) E(X | X > a E(X))                  \\
+             & \implies P(X > a E(X)) \leq \frac{E(X)}{E(X | X > aE(X))} \leq \frac{E(X)}{aE(X)} = a^{-1}
     \end{align*}
 \end{proof}
 
@@ -286,24 +320,24 @@ We first prove a couple of lemmas that are known as 'Sylvester's theorem'.
     Define the following matrices
     \begin{align*}
         C = \begin{bmatrix}
-            xI_m & A \\
-            B & I_n
-        \end{bmatrix},\quad
+                xI_m & A   \\
+                B    & I_n
+            \end{bmatrix},\quad
         D = \begin{bmatrix}
-            I_m & 0 \\
-            -B & xI_n
-        \end{bmatrix}
+                I_m & 0    \\
+                -B  & xI_n
+            \end{bmatrix}
     \end{align*}
     we can see that
     \begin{align*}
         CD = \begin{bmatrix}
-            xI_m - AB & xA \\
-            0 & xI_n
-        \end{bmatrix},\quad
+                 xI_m - AB & xA   \\
+                 0         & xI_n
+             \end{bmatrix},\quad
         DC = \begin{bmatrix}
-            xI_m & A \\
-            0 & xI_n - BA
-        \end{bmatrix}
+                 xI_m & A         \\
+                 0    & xI_n - BA
+             \end{bmatrix}
     \end{align*}
     using $\det(CD) = \det(DC)$, we get the required result.
 \end{proof}
@@ -320,7 +354,7 @@ We first prove a couple of lemmas that are known as 'Sylvester's theorem'.
     For positive definite symmetric matrices $A$, a matrix $\sqrt{A}$ such that $\sqrt{A}^2 = A$ exists.
 \end{lemma}
 \begin{proof}
-    Existence follows since the diagonalized matrix of $A$ has a square root. 
+    Existence follows since the diagonalized matrix of $A$ has a square root.
 \end{proof}
 
 We are now ready to prove the theorem.
@@ -331,15 +365,15 @@ We are now ready to prove the theorem.
     Let $\sqrt{A}$ be a square root of $A$, now define the $n \times (n + 1)$ matrix $C$ as
     \begin{align*}
         C := \begin{bmatrix}
-            \sqrt{A} & \vec{x}
-        \end{bmatrix}
+                 \sqrt{A} & \vec{x}
+             \end{bmatrix}
     \end{align*}
     then we can write
     \begin{align*}
         CC^T = B, \quad C^T C = \begin{bmatrix}
-            A & \sqrt{A}x \\
-            x^T \sqrt{A} & x^T x
-        \end{bmatrix}
+                                    A            & \sqrt{A}x \\
+                                    x^T \sqrt{A} & x^T x
+                                \end{bmatrix}
     \end{align*}
     By previous lemma, $C^TC$ and $CC^T$ share the same set of nonnegative eigenvalues. The eigenvalues of $A$ interlace the eigenvalues of $C^T C$ since it is a principal submatrix.
     The eigenvalues of $C^TC$ are thus all positive except the smallest (which is $0$). Since the eigenvalues of $CC^T = B$ are positive, the result follows.
@@ -398,13 +432,13 @@ We are now ready to prove the theorem.
     Since $W$ is cyclic by definition, $A$ has $k$ distinct eigenvalues $\lambda_1 > ... > \lambda_k$ with eigenvectors $\vec{\phi}_i$.
     Let $z$ not be an eigenvalue of $A$, then
     \begin{align*}
-        \chi(B)(z) &= \det(zI - A - \vec{x}\vec{x}^T) \\
-        &= \det(zI - A) \det(I - (zI - A)^{-1}\vec{x}\vec{x}^T)
+        \chi(B)(z) & = \det(zI - A - \vec{x}\vec{x}^T)                      \\
+                   & = \det(zI - A) \det(I - (zI - A)^{-1}\vec{x}\vec{x}^T)
     \end{align*}
     $zI-A$ is invertible since $z$ is not an eigenvalue of $A$. We can now use \hyperref[lemma:sylvester]{Sylvester's theorem} with $x = 1$ to write
     \begin{align*}
-        \chi(B)(z) &= \chi(A)(z)(1 - \vec{x}^T (zI - A)^{-1} \vec{x}) \\
-        &= \chi(A)(z)\left(1 - \sum_{i = 1}^k \frac{(\vec{x}^T \vec{\phi}_i^T)^2}{z - \lambda_i}\right)
+        \chi(B)(z) & = \chi(A)(z)(1 - \vec{x}^T (zI - A)^{-1} \vec{x})                                              \\
+                   & = \chi(A)(z)\left(1 - \sum_{i = 1}^k \frac{(\vec{x}^T \vec{\phi}_i^T)^2}{z - \lambda_i}\right)
     \end{align*}
     Define the function
     \begin{align*}
@@ -413,7 +447,7 @@ We are now ready to prove the theorem.
     Note the following properties of $G$
     \begin{enumerate}
         \item Solutions to $G(z) = 1$ are eigenvalues of $B$.
-        \item Since $\phi_i \in W$, we must have $\vec{x}^T \vec{\phi}_i \neq 0$. 
+        \item Since $\phi_i \in W$, we must have $\vec{x}^T \vec{\phi}_i \neq 0$.
         \item There is exactly one solution ($\mu_{i + 1}$) to $G(z) = 1$ for $z \in (\lambda_{i + 1}, \lambda_{i})$, $1 \leq i \leq k - 1$.
         \item There is exactly one solution ($\mu_1$) to $G(z) = 1$ for $z > \lambda_1$.
     \end{enumerate}
