@@ -4,6 +4,8 @@
 \usepackage{hyperref}
 
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
+\newcommand{\expect}{\mathbb{E}}
+\newcommand{\prob}{Pr}
 
 \title{Spectral Graph Theory}
 \author{Vignesh M Pai}
@@ -226,35 +228,135 @@ Note that this path has size atmost $2d \leq 2 \log_{2} n$. Doing a similar comp
 
 \section{Random Graphs}
 
-An Erd\"{o}s-R\'{e}nyi random graph is a graph in which each edge is present with probability $p$ independent of other edges.
+\subsection{Introduction}
+
+An Erd\"{o}s-R\'{e}nyi random graph is a graph in which each edge is present with probability $p$, independent of other edges.
+The largest eigenvalue of such a graph is close to $pn$ and all other eigenvalues are usually atmost of order $\sqrt{np}$.
+Our goal is to prove formal results regarding the eigenvalues.
+
 We can write the adjacency matrix $M$ of this graph as
 \begin{align*}
-    M = p(J - I) + R
+    M = \expect(M) + R = p(J - I) + R
 \end{align*}
-where $J$ is the all ones matrix, $I$ is the identity matrix and $R$ is defined for off diagonal entries as
+where $J$ is the all ones matrix, $I$ is the identity matrix and $R$ is defined for off diagonal lower triangular entries as
 \begin{align*}
     R(a, b) = \begin{cases}
                   1 - p & \text{with probability $p$}   \\
                   -p    & \text{with probability $1-p$}
               \end{cases}
 \end{align*}
-clearly the expectation of $M$ is $\rho(J - I)$, which means the expectation of $R$ is the zero matrix.
-This can be easily verified from the definition of $R$. We will show that the eigenvalues of $R$ are usually small
-and thus $M$ is approximately $p(J - I)$. The following lemma gives bounds on the eigenvalues of $M$.
+The upper triangular entries are determined from the symmetry of $R$.
+Clearly the expectation of $R$ is the zero matrix.
+We will show that the eigenvalues of $R$ are usually small
+and thus $M$ is approximately $p(J - I)$. Note that the eigenvalues of $p(J - I)$ are $p(n - 1)$ with multiplicity $1$ and $-p$ with multiplicity $n - 1$.
 
-\begin{lemma}
-    Let the eigenvalues of $R$ be $\rho_1 \geq ... \geq \rho_n$.
-    Then, the eigenvalues of $R - pI$ are $\rho_i - p$.
-    Since $pJ$ is rank one, the eigenvalues of $M = R - pI + pJ$ interlace the eigenvalues of $R - pI$.
-\end{lemma}
+Let the eigenvalues of $R$ be $\rho_1 \geq ... \geq \rho_n$.
+Then, the eigenvalues of $R - pI$ are $\rho_i - p$.
+Since $pJ$ is rank one, the eigenvalues of $M = R - pI + pJ$ interlace the eigenvalues of $R - pI$ by the \hyperref[thm:cauchy-rank-one]{Cauchy interlacing theorem}.
+Hence, the eigenvalues of $R$ can give bounds on the eigenvalues of $M$.
+
+\subsection{Moments of Eigenvalues}
 
 We can get some quantitative results on the eigenvalues of $R$ by calculating the moments of $\rho_i$.
 It is easy to verify that the $k$th moment is
 \begin{align*}
-    \sum_{i=1}^{n} \rho_i^k = Tr(R^k)
+    \sum_{i=1}^{n} \rho_i^k = \trace(R^k)
+\end{align*}
+We know that the eigenvalues of $R^k$ are $\rho_i^k$.
+From the value of the trace, we know that for even $k$
+\begin{align*}
+    \rho_1^k \leq Tr(R^k) \implies |\rho_1| \leq Tr(R^k)^{1/k}
+\end{align*}
+If we calculate a bound: $\expect(Tr(R^k)) < u$, we can write using \hyperref[thm:markov]{Markov's inequality}
+\begin{align*}
+    \prob(|\rho_1| > (1 + \epsilon)u^{1 / k}) & = \prob(\rho_1^k > (1 + \epsilon)^k u)                  \\
+                                              & \leq \prob(Tr(R^l) > (1 + \epsilon)^k \expect(Tr(R^k))) \\
+                                              & \leq (1 + \epsilon)^{-k}
+\end{align*}
+The probability on the RHS will be small if $\epsilon > 1 / k$.
+This will in particular be useful if for large $k$ we can find small $u$.
+
+\subsection{Expectation of The Trace}
+
+Let $M$ be a matrix, then we can write
+\begin{align*}
+    M^l(a, b) = \sum_{v_1, ..., v_{k - 1} \in V} M(a, v_1) M(v_1, v_2) ... M(v_{l - 1}, b)
+\end{align*}
+Therefore, we can write
+\begin{align*}
+    \expect(R^l(a_0, a_0)) = \sum_{a_1, ..., a_{l-1} \in V} \expect(R(a_0, a_1) R(a_1, a_2) ... R(a_l, a_0))
+\end{align*}
+Note that distinct elements of $R$ are independent, therefore the only dependence comes from terms that appear multiple times.
+Let $S$ be the multiset $\set{\set{a_0, a_1}, \set{a_1, a_2}, ..., \set{a_{l-1}, a_0}}$ and $S'$ denote the set of the same elements, then
+\begin{align*}
+    \expect(R(a_0, a_1) R(a_1, a_2) ... R(a_l, a_0)) = \prod_{\set{b_i, c_i} \in S'} \expect(R(b_i, c_i)^{d_i})
+\end{align*}
+where $d_i$ denotes the number of $\set{b_i, c_i}$ in $S$.
+The RHS is clearly zero if any $d_i$ is $1$. For $d \geq 2$, we can write
+\begin{align*}
+    \expect(R(b_i, c_i)^d) & = (1 - p)^d p + (-p)^d (1 - p) = p(1 - p) \left((1-p)^{d - 1} - (-p)^{d-1}\right) \leq p(1 - p)
+\end{align*}
+this gives us
+\begin{align*}
+    \expect(R(a_0, a_1) R(a_1, a_2) ... R(a_l, a_0)) \leq (p(1-p))^{|S'|}
 \end{align*}
 
-\subsection{Appendix}
+We define a closed walk of length $l$ as a sequence of vertices $a_0, a_1, ..., a_{l - 1}, a_l$ such that $a_l = a_0$.
+A closed walk is called significant if the multiset $\set{\set{a_0, a_1}, \set{a_1, a_2}, ... \set{a_{l-1}, a_l}}$ has atleast two copies of each element.
+
+\begin{definition}
+    Let $W_{n, l, k}$ denote the number of significant closed walks of length $l$ in a graph with $n$ vertices such that the above multiset has $k$ distinct elements.
+\end{definition}
+
+\begin{lemma}
+    \begin{align*}
+        \expect(\trace(R^l)) \leq \sum_{k = 1}^{l / 2} W_{n, l, k} (p(1-p))^k
+    \end{align*}
+\end{lemma}
+
+\subsection{The Number of Walks}
+
+\begin{lemma}
+    \begin{align*}
+        W_{n, l, k} \leq n^{k + 1}2^ll^{4(l - 2k)}
+    \end{align*}
+\end{lemma}
+
+\subsection{Putting It All Together}
+
+Using the bound on the number of walks, we can write
+\begin{align*}
+    \expect(\trace(R^l)) &\leq \sum_{k=1}^{l/2} n^{k + 1}2^ll^{4(l - 2k)} (p(1-p))^k \\
+    &= n 2^l l^{4l} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^k \\
+    &= n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^{1-k}
+\end{align*}
+for $l^8 \leq np(1-p)$, we get
+\begin{align*}
+    \expect(\trace(R^l)) &\leq n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} 2^{1-k} \\
+    &\leq 2n(4np(1-p))^{l/2}
+\end{align*}
+Substituting back in the markov identity, we get
+\begin{align*}
+    \prob(|\rho_1| \geq (1 + \epsilon) (2n)^{1/l}(4np(1-p))^{1/2}) \leq (1 + \epsilon)^{-l}
+\end{align*}
+Note that $(2n)^{1/l}$ can be written as
+\begin{align*}
+    (2n)^{1/l} = 2^{\log_2{2n}/l}
+\end{align*}
+We get the required result, that the eigenvalues are of order $\sqrt{np}$, if $l$ satisfies
+\begin{align*}
+    1 + \log_2{n} < l < (np(1-p))^{1/8}
+\end{align*}
+Such an $l$ can be found for sufficiently large $n$, for $p = 0.5$, $n$ roughly needs to satisfy
+\begin{align*}
+    n^{1/8} > 1 + \log_2 n
+\end{align*}
+This is not satisfied for $n = 2^{40} \approx 10^{12}$.
+Therefore while asymptotically useful, this result may not be practically useful.
+
+\section{Appendix}
+
+\subsection{Linear Algebraic Results}
 
 \begin{theorem}
     Let $A, B$ be commuting symmetric matrices on a vector space $V$, then they can be simultaneously diagonalized by the same unitary transformation.
@@ -277,16 +379,16 @@ It is easy to verify that the $k$th moment is
 
 The above theorem is helpful in calculating the eigenvalues of $A + B$.
 
-\begin{theorem}[Markov's Inequality]
-    Let $X$ be a non negative random variable with $a > 0$, then
+\begin{theorem}
+    Let $M$ be a symmetric matrix with eigenvalues $\lambda_i$, then
     \begin{align*}
-        P(X > a E(X)) \leq a^{-1}
+        \sum_i \lambda_i = Tr(M)
     \end{align*}
 \end{theorem}
 \begin{proof}
+    Let $D$ be the diagonal matrix of $M$ diagonalized by $U$, then
     \begin{align*}
-        E(X) & = P(X \leq a E(X)) E(X | X \leq a E(X)) + P(X > a E(X)) E(X | X > a E(X))                  \\
-             & \implies P(X > a E(X)) \leq \frac{E(X)}{E(X | X > aE(X))} \leq \frac{E(X)}{aE(X)} = a^{-1}
+        M = UDU^T \implies Tr(M) = Tr((UD)U^T) = Tr(U^T (UD)) = Tr(D) = \sum_i \lambda_i
     \end{align*}
 \end{proof}
 
@@ -294,7 +396,7 @@ The above theorem is helpful in calculating the eigenvalues of $A + B$.
 
 The result that we want to prove is
 
-\begin{theorem}[Cauchy Interlacing Theorem for Rank One Updates]
+\begin{theorem}[Cauchy Interlacing Theorem for Rank One Updates]\label{thm:cauchy-rank-one}
     Let $A$ be a symmetric matrix with eigenvalues $\alpha_1 \geq ... \geq \alpha_n$.
     Let $B = A + \vec{x} \vec{x}^T$ for some vector $\vec{x}$, let $B$ have eigenvalues $\beta_1 \geq ... \geq \beta_n$, then
     \begin{align*}
@@ -456,6 +558,21 @@ We are now ready to prove the theorem.
         \mu_i \geq \lambda_i \geq \mu_{i + 1}
     \end{align*}
     Since $A=B$ on $W^\perp$, the interlacing property is not affected by including the eigenvalues from this vector space.
+\end{proof}
+
+\subsection{Probability}
+
+\begin{theorem}[Markov's Inequality]\label{thm:markov}
+    Let $X$ be a non negative random variable with $a > 0$, then
+    \begin{align*}
+        P(X > a E(X)) \leq a^{-1}
+    \end{align*}
+\end{theorem}
+\begin{proof}
+    \begin{align*}
+        E(X) & = P(X \leq a E(X)) E(X | X \leq a E(X)) + P(X > a E(X)) E(X | X > a E(X))                  \\
+             & \implies P(X > a E(X)) \leq \frac{E(X)}{E(X | X > aE(X))} \leq \frac{E(X)}{aE(X)} = a^{-1}
+    \end{align*}
 \end{proof}
 
 \end{document}
