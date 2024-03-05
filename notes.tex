@@ -231,6 +231,7 @@ Note that this path has size atmost $2d \leq 2 \log_{2} n$. Doing a similar comp
 \subsection{Introduction}
 
 An Erd\"{o}s-R\'{e}nyi random graph is a graph in which each edge is present with probability $p$, independent of other edges.
+We discuss the eigenvalues of the adjacency matrix.
 The largest eigenvalue of such a graph is close to $pn$ and all other eigenvalues are usually atmost of order $\sqrt{np}$.
 Our goal is to prove formal results regarding the eigenvalues.
 
@@ -326,14 +327,14 @@ A closed walk is called significant if the multiset $\set{\set{a_0, a_1}, \set{a
 
 Using the bound on the number of walks, we can write
 \begin{align*}
-    \expect(\trace(R^l)) &\leq \sum_{k=1}^{l/2} n^{k + 1}2^ll^{4(l - 2k)} (p(1-p))^k \\
-    &= n 2^l l^{4l} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^k \\
-    &= n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^{1-k}
+    \expect(\trace(R^l)) & \leq \sum_{k=1}^{l/2} n^{k + 1}2^ll^{4(l - 2k)} (p(1-p))^k  \\
+                         & = n 2^l l^{4l} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^k           \\
+                         & = n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} (np(1-p)l^{-8})^{1-k}
 \end{align*}
 for $l^8 \leq np(1-p)$, we get
 \begin{align*}
-    \expect(\trace(R^l)) &\leq n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} 2^{1-k} \\
-    &\leq 2n(4np(1-p))^{l/2}
+    \expect(\trace(R^l)) & \leq n (4np(1-p))^{l/2} \sum_{k=1}^{l/2} 2^{1-k} \\
+                         & \leq 2n(4np(1-p))^{l/2}
 \end{align*}
 Substituting back in the markov identity, we get
 \begin{align*}
@@ -353,6 +354,93 @@ Such an $l$ can be found for sufficiently large $n$, for $p = 0.5$, $n$ roughly 
 \end{align*}
 This is not satisfied for $n = 2^{40} \approx 10^{12}$.
 Therefore while asymptotically useful, this result may not be practically useful.
+
+\section{Eigenvalues and Eigevectors of Some Graphs}
+
+\subsection{Quotient Graphs}
+
+\begin{definition}[Equitable Partition]
+    Given a graph $G$, let $C = (C_1, C_2, ..., C_k)$ be a partition of $V(G)$, the elements of the partition are called cells.
+    Such a partition is said to equitable if the number of edges between a fixed vertex in $C_i$ and $C_j$
+    is independent of that fixed vertex, we denote this number by $c_{ij}$.        
+\end{definition}
+
+\begin{lemma}
+    A partition is equitable iff the induced subgraph of each cell is regular and the edges between two cells form a biregular graph.
+\end{lemma}
+
+\begin{definition}[Quotient Graph]
+    Given a partition $C$ of $G$, the quotient $G/C$ is defined to be the graph with vertices $C$ and a cell $C_i$ has a directed edge to $C_j$ of weight $c_{ij}$.
+\end{definition}
+
+In general the quotient graph has loops, non unit weights and cannot be represented as an undirect graph ($c_{ij} \neq c_{ji}$).
+We will show that the characteristic polynomial of $M_{G/C}$ divides that of $M_{G}$.
+
+If $|G| = n, |C| = k$, the characteristic matrix $P(C)$ is a $(n,k)$ matrix whose $(i, j)$ entry is whether the $i$th vertex of $G$ is contained in $C_j$.
+this gives us a computational way to represent $C$.
+
+\begin{lemma}
+    If $C$ is an equitable partition of $G$, then $M_{G}P(C) = P(C)M_{G/C}$. Conversely, if there exists a $B$ such that $M_G P(C) = P(C) B$, then $C$ is equitable.
+\end{lemma}
+
+This lemma can be rephrased as: $C$ is equitable iff the column space of $P(C)$ is an invariant subspace of $M_G$.
+The column space of $P(C)$ is the vector space of functions on $G$ that are constant on the cells of $C$.
+
+\begin{corollary}
+    If $C$ is equitable, then $L_{G}P(C) = P(C)L_{G/C}$. Conversely, if there exists a $B$ such that $L_G P(C) = P(C) B$, then $C$ is equitable.
+\end{corollary}
+
+The Laplacian of a graph is invariant under addition and removal of loops (this is not true for the adjacency matrix).
+Therefore, the above corollary is also true for $G/C$ replaced by the same graph with its loops removed.
+
+\begin{theorem}
+    Let $C$ be an equitable partition of $G$, then for $A \in \set{M, L}$
+    \begin{enumerate}
+        \item $A_{G/C}\vec{x} = \lambda \vec{x} \implies A_GP\vec{x} = \lambda P \vec{x}$
+        \item $A_G \vec{y} = \lambda \vec{y} \implies \vec{y}^T P A_{G/C} = \lambda \vec{y}^T P$
+        \item The characteristic polynomial of $A_{G/C}$ divides the characteristic polynomial of $A$.
+    \end{enumerate}
+\end{theorem}
+
+When $A_{G/C}$ is symmetric, the second condition can be rewritten as
+\begin{align*}
+    A_G \vec{y} = \lambda y \implies A_{G/C} P^T \vec{y} = \lambda P^T \vec{y}
+\end{align*}
+
+\subsection{Cycle Graph}
+
+Represent the vertices of $C_n$ as $\set{0, 1, ..., n - 1}$.
+\begin{theorem}
+    The cycle graph $C_n$ has eigenvectors
+    \begin{align*}
+        \vec{x}_k (u) &= \cos(\frac{2\pi k u}{n}) \\
+        \vec{y}_k (u) &= \sin(\frac{2\pi k u}{n})
+    \end{align*}
+    for $0 \leq k \leq n/2$, ignoring $\vec{y}_0$ which is $\vec{0}$,
+    with eigenvalue $2 - 2 \cos \frac{2\pi k}{n}$.
+\end{theorem}
+
+\subsection{Path Graph}
+
+Consider $C_{2n}$ and the partition $\sigma$ defined as $(\set{0, 2n - 1}, \set{1, 2n - 2}, ... \set{n - 1, n})$.
+Clearly this partition is equitable and $C_{2n}/\sigma$ is $P_n$ with loops at the endpoint vertices.
+From the previous section, we can write
+\begin{align*}
+    L_{C_{2n}} P = P L_{P_n}
+\end{align*}
+Since $L_{P_n}$ is symmetric, the the following must be eigenvectors of $P_n$
+\begin{align*}
+    P^T \vec{x}_k(u) &= \cos(\frac{\pi k u}{n}) + \cos(\frac{\pi k (2n - 1 - u)}{n}) \\
+    &= \cos(\frac{\pi k u}{n}) + \cos(\frac{\pi k (u + 1)}{n}) \\
+    &= 2 \cos(\frac{\pi k}{2n}) \cos(\frac{\pi k (u + \frac{1}{2})}{n}) \\
+    P^T \vec{y}_k(u) &= \sin(\frac{\pi k u}{n}) + \sin(\frac{\pi k (2n - 1 - u)}{n}) \\
+    &= \sin(\frac{\pi k u}{n}) - \sin(\frac{\pi k (u + 1)}{n}) \\
+    &= - 2 \sin(\frac{\pi k}{2n}) \cos(\frac{\pi k (u + \frac{1}{2})}{n})
+\end{align*}
+Hence the eigenvector corresponding to eigenvalue $2 - 2 \cos\frac{\pi k}{n}$ is
+\begin{align*}
+    \vec{\phi}_k (u) = \cos(\frac{\pi k (u + \frac{1}{2})}{n})
+\end{align*}
 
 \section{Appendix}
 
