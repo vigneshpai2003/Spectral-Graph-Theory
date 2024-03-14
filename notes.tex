@@ -444,6 +444,98 @@ Such an $l$ can be found for sufficiently large $n$, for $p = 0.5$, $n$ roughly 
 This is not satisfied for $n = 2^{40} \approx 10^{12}$.
 Therefore while asymptotically useful, this result may not be practically useful.
 
+\section{Random Walks on Graphs}
+
+A random walk on a weighted undirected graph $G$ is a walk that randomly moves to an adjacent vertex with probability proportional
+to the weight of the edge. The probability density at time $t + 1$ can be written as
+\begin{align*}
+    \vec{p}_{t + 1}(a) &= \sum_{b: (a, b) \in E(G)} \frac{w(a, b)}{\vec{d}(b)} \vec{p}_t(b) \\
+    \implies \vec{p}_{t + 1} &= M D^{-1} \vec{p}_t
+\end{align*}
+The walk matrix $W$ is defined as $MD^{-1}$. The lazy walk matrix is defined as
+\begin{align*}
+    \widetilde{W} = \frac{1}{2} I + \frac{1}{2} W
+\end{align*}
+The lazy walk remains at the current vertex with probability half, this is more well behaved than the walk matrix
+(in terms of convergence of $\vec{p}_t$).
+
+\subsection{Convergence}
+
+The walk matrix is similar to the normalized adjacency matrix which is symmetric and thus has nice properties of eigenvectors
+\begin{align*}
+    \widetilde{M} = D^{-\frac{1}{2}} W D^{\frac{1}{2}} = D^{-\frac{1}{2}} M D^{-\frac{1}{2}}
+\end{align*}
+
+\begin{lemma}
+    $\vec{\psi}$ is an eigenvector of $\widetilde{M}$ iff $D^{\frac{1}{2}}\vec{\psi}$ is an eigenvector of $W$, further they have same eigenvalue
+    and the eigenvectors of $W$ are the same as $\widetilde{W}$.
+\end{lemma}
+
+Note that $\vec{d}$ is a positive eigenvector of $W$ with eigenvalue $1$.
+By Perron-Frobenius theorem, the eigenvalues of $W$ must lie between $-1$ and $1$.
+The eigenvalues of $\widetilde{W}$ are simple of the form $(1 + \lambda_i)/2$ where $\lambda_i$ are eigenvectors of $W$.
+Hence, the eigenvalue of $\widetilde{W}$ lie between $0$ and $1$.
+
+Clearly for a probability distribution to be stable with respect to the lazy random walk, it must be an eigenvector of $\widetilde{W}$ of eigenvalue $1$.
+This distribution is
+\begin{align*}
+    \vec{\pi} = \frac{\vec{d}}{\vec{1}^T\vec{d}}
+\end{align*}
+Now we will prove that the probability distribution of the lazy random walk converges to $\vec{\pi}$.
+Let $\vec{\psi}_i$ be the orthonormal eigenvectors of $\widetilde{M}$
+corresponding to eigenvalues $\omega_i$ of $\widetilde{W}$ ($1 = \omega_1 > \omega_2 \geq ... \geq 0$).
+The eigenvalues of $\widetilde{M}$ are then $2 \omega_i - 1$.
+Note that
+\begin{align*}
+    \vec{\psi}_1 \propto D^{-\frac{1}{2}} \vec{d} = \sqrt{\vec{d}} \implies \vec{\psi}_1 = \frac{\sqrt{\vec{d}}}{\lVert\sqrt{\vec{d}} \rVert }
+\end{align*}
+and we can write $\vec{p}_0$ as
+\begin{align*}
+    D^{-\frac{1}{2}}\vec{p}_0 = \sum_{i} c_i \vec{\psi}_i
+\end{align*}
+and in particular $c_1$ is
+\begin{align*}
+    c_1 = \vec{\psi}_1^T D^{-\frac{1}{2}}\vec{p}_0 = \frac{\sqrt{\vec{d}}^T}{\lVert\sqrt{\vec{d}}\rVert} (D^{-\frac{1}{2}} \vec{p}_0) = \frac{\vec{1}^T \vec{p}_0}{\lVert\sqrt{\vec{d}}\rVert} = \frac{1}{\lVert\sqrt{\vec{d}}\rVert}
+\end{align*}
+Now, we can write $\vec{p}_t$ as
+\begin{align*}
+    \vec{p}_t &= \widetilde{W}^t \vec{p}_0 \\
+    &=D^{\frac{1}{2}} \left(D^{-\frac{1}{2}} \widetilde{W} D^{\frac{1}{2}}\right)^t D^{-\frac{1}{2}} \vec{p}_0 \\
+    &=D^{\frac{1}{2}} \left(\frac{1}{2} I + \frac{1}{2} \widetilde{M}\right)^t \sum_{i} c_i \vec{\psi}_i \\
+    &=D^{\frac{1}{2}} \sum_{i} c_i \omega_i^t \vec{\psi}_i \\
+    &=D^{\frac{1}{2}} c_1 \vec{\psi}_1 + D^{\frac{1}{2}} \sum_{i \geq 2} c_i \omega_i^t \vec{\psi}_i
+\end{align*}
+Note that for sufficiently large $t$, the second term goes to zero as $\omega_i < 1$ for $i \geq 2$.
+Evaluating the first term, we get
+\begin{align*}
+    \lim_{t \to \infty} \vec{p}_t = D^{\frac{1}{2}} c_1 \vec{\psi}_1 = D^{\frac{1}{2}} \frac{\sqrt{\vec{d}}}{\lVert \sqrt{\vec{d}} \rVert^2} = \frac{\vec{d}}{\vec{1}^T \vec{d}} = \vec{\pi}
+\end{align*}
+
+\subsection{Rate of Convergence}
+
+We measure the rate of convergence pointwise, by calculating upper bounds on $|\vec{p}_t(b) - \vec{\pi}(b)|$.
+Assuming that $\vec{p}_0 = \vec{\delta}_a$
+\begin{align*}
+    \vec{p}_t &= \vec{\pi} + D^{\frac{1}{2}} \sum_{i \geq 2} c_i \omega_i^t \vec{\psi}_i \\
+    \implies \vec{p}_t(b) - \vec{\pi}(b) &= \vec{\delta}_b^T D^{\frac{1}{2}} \sum_{i \geq 2}\left(\vec{\psi}_i^T D^{-\frac{1}{2}} \vec{\delta}_a\right) \omega_i^t \vec{\psi}_i \\
+    &= \sqrt{\vec{d}(b)} \vec{\delta}_b^T \sum_{i \geq 2}\frac{(\vec{\psi}_i^T \vec{\delta}_a)}{\sqrt{d(a)}} \omega_i^t \vec{\psi}_i \\
+    &= \sqrt{\frac{\vec{d}(b)}{\vec{d}(a)}} \sum_{i \geq 2}\omega_i^t(\vec{\psi}_i^T \vec{\delta}_a) (\vec{\delta}_b^T \vec{\psi}_i)
+\end{align*}
+We can bound the term on the right like
+\begin{align*}
+    \left| \sum_{i \geq 2}\omega_i^t(\vec{\psi}_i^T \vec{\delta}_a) (\vec{\delta}_b^T \vec{\psi}_i) \right| &\leq \sum_{i \geq 2} \omega_i^t |\vec{\psi}_i^T \vec{\delta}_a| |\vec{\delta}_b^T \vec{\psi}_i| \\
+    &\leq \omega_2^t \sum_{i \geq 1} |\vec{\psi}_i^T \vec{\delta}_a| |\vec{\delta}_b^T \vec{\psi}_i| \\
+    &\leq \omega_2^t \lVert \vec{\delta}_a \rVert \lVert \vec{\delta}_b \rVert \\
+    &\leq \omega_2^t
+\end{align*}
+
+\begin{theorem}
+    Given $p_0 = \vec{\delta}_a$, we can write
+    \begin{align*}
+        |\vec{p}_t(b) - \vec{\pi}(b)| \leq \sqrt{\frac{\vec{d}(b)}{\vec{d}(a)}} \omega_2^t
+    \end{align*}
+\end{theorem}
+
 \section{Appendix}
 
 \subsection{Linear Algebraic Results}
