@@ -536,6 +536,55 @@ We can bound the term on the right like
     \end{align*}
 \end{theorem}
 
+\subsection{Normalized Laplacian}
+
+The normalized Laplacian $\widetilde{L}$ is defined similar to $\widetilde{M}$
+\begin{align*}
+    \widetilde{L} = D^{-\frac{1}{2}} L D^{-\frac{1}{2}} = I - \widetilde{M}
+\end{align*}
+
+\begin{lemma}
+    Let $\lambda_1 \leq ... \leq \lambda_n$ be eigenvalues of $L$ and $v_1 \leq ... \leq v_n$ eigenvalues of $\widetilde{L}$.
+    Then, we have
+    \begin{align*}
+        \frac{\lambda_i}{d_{min}} \leq v_i \leq \frac{\lambda_i}{d_{max}}
+    \end{align*}
+\end{lemma}
+
+The proof follows easily from a change of variables in the Courant Fischer theorem.
+
+It is easy to see that the eigenvalues of $\widetilde{L}$ are of the form $v_i = 2 - 2 \omega_i$.
+We say the walk has \textbf{mixed} at time $t$ if $|\vec{p}_t(b) - \vec{\pi}(b)| \leq \vec{\pi}(b)/2$.
+We can easily compute a lower bound on $t$ for this to be true using the above theorem on convergence rate
+\begin{align*}
+    \sqrt{\frac{\vec{d}(b)}{\vec{d}(a)}} \omega_2^t &\leq \frac{\vec{d}(b)}{2 \vec{1}^T \vec{d}} \\
+    \iff \omega_2^t &\leq \frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}} \\
+    \iff \left(1 - \frac{v_2}{2}\right)^t &\leq \frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}} \\
+    \implies \exp{-\frac{tv_2}{2}} &\leq \frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}} \\
+    \iff -\frac{tv_2}{2} &\leq \ln{\frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}}} \\
+    \iff t &\geq \frac{2}{v_2} \ln{\frac{2 \vec{1}^T \vec{d}}{\sqrt{\vec{d}(a)\vec{d}(b)}}} = \frac{O(\ln{n})}{v_2} \\
+\end{align*}
+To get the equivalence in the other direction, we need to find $t'$ such that
+\begin{align*}
+    \left(1 - \frac{v_2}{2}\right)^{t'} &\leq \exp{-\frac{tv_2}{2}} \\
+    \iff t' \ln\left(1 - \frac{v_2}{2}\right) &\leq -\frac{tv_2}{2} \\
+    \iff t' &\geq \frac{v_2}{2 \ln{\frac{1}{1 - v_2/2}}} t
+\end{align*}
+Let the factor on the RHS be $c$, then
+\begin{align*}
+    t &\geq c \frac{2}{v_2} \ln{\frac{2 \vec{1}^T \vec{d}}{\sqrt{\vec{d}(a)\vec{d}(b)}}} \\
+    \iff \exp{-\frac{tv_2}{2c}} &\leq \frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}} \\
+    \implies \left(1 - \frac{v_2}{2}\right)^{t'} &\leq \frac{\sqrt{\vec{d}(a)\vec{d}(b)}}{2 \vec{1}^T \vec{d}},\quad t' \geq c\frac{t}{c} = t \\
+    \iff \sqrt{\frac{\vec{d}(b)}{\vec{d}(a)}} \omega_2^{t'} &\leq \frac{\vec{d}(b)}{2 \vec{1}^T \vec{d}} \\
+    \implies |\vec{\pi}_{t'}(b) - \vec{\pi}(b)| &\leq \frac{\vec{\pi}(b)}{2}
+\end{align*}
+Therefore, the number of steps required for mixing is of the order
+\begin{align*}
+    \frac{c}{v_2}O(\ln{n}) = \frac{O(\ln{n})}{-\ln\left(1 - \frac{v_2}{2}\right)} = \frac{O(\ln{n})}{-\ln{\omega_2}}
+\end{align*}
+
+\section{Harmonic Functions on Graphs}
+
 \section{Appendix}
 
 \subsection{Linear Algebraic Results}
