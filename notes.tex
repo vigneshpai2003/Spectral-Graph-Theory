@@ -585,6 +585,29 @@ Therefore, the number of steps required for mixing is of the order
 
 \section{Harmonic Functions on Graphs}
 
+We first impose an additional structure on a weighted graph $G$, a non empty set $B \subset V(G)$ called the boundary.
+The graph $G$ is now the tuple $(V, E, w, B)$ and we denote $B$ by $B(G)$ or $B_G$. The interior of the graph is then defined by $S(G) = V_G - B_G$.
+
+\begin{definition}
+    A function $f$ is harmonic on a graph $G$ if for all $a \in S(G)$
+    \begin{align*}
+        f(a) = \frac{1}{d(a)} \sum_{b \sim a} w_{ab}f(b)
+    \end{align*}
+\end{definition}
+
+We can make an analogy between harmonic functions and spring networks. Consider a network of springs in $\mathbb{R}^k$
+with node $a$ at position $f(a)$ and neighboring nodes being connected by a harmonic spring of strength $w_{ab}$.
+If we fix the nodes in $B$ at some fixed points, the interior nodes, in equilibrium must have the net force on them $0$, which means
+\begin{align*}
+    \sum_{b \sim a} w_{ab}(f(a) - f(b)) = 0
+\end{align*}
+This is equivalent to saying that $f$ is harmonic on the graph.
+Hence equilibrium states of spring networks correspond to harmonic functions on graphs.
+
+\subsection{Existence and Uniqueness}
+
+We show that for every graph, there exists a unique harmonic function, given the values of the function at the boundary.
+
 \section{Appendix}
 
 \subsection{Linear Algebraic Results}
